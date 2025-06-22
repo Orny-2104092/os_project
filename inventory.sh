@@ -1,16 +1,76 @@
 #!/bin/bash
 DATA="data/inventory.csv"
 
+# Define location codes and sequential counters for each location
+declare -A location_codes
+location_codes=(
+  ["Shelf A"]="A"
+  ["Shelf B"]="B"
+  ["Drawer 1"]="D1"
+  ["Drawer 2"]="D2"
+  ["Fume Hood"]="FH"
+  ["Fridge"]="F"
+)
+
+declare -A location_counters
+location_counters=(
+  ["Shelf A"]=1
+  ["Shelf B"]=1
+  ["Drawer 1"]=1
+  ["Drawer 2"]=1
+  ["Fume Hood"]=1
+  ["Fridge"]=1
+)
+
 add_item() {
   read -p "Item Name: " name
   read -p "Category: " category
-  read -p "Location: " location
+  
+  # Predefined locations for efficiency
+  echo "Select location:"
+  echo "1. Shelf A"
+  echo "2. Shelf B"
+  echo "3. Drawer 1"
+  echo "4. Drawer 2"
+  echo "5. Fume Hood"
+  echo "6. Fridge"
+  echo "7. Other"
+  read -p "Choose a location (1-7): " location_choice
+
+  # Handle location input based on user's choice
+  case $location_choice in
+    1) location="Shelf A" ;;
+    2) location="Shelf B" ;;
+    3) location="Drawer 1" ;;
+    4) location="Drawer 2" ;;
+    5) location="Fume Hood" ;;
+    6) location="Fridge" ;;
+    7) 
+      read -p "Enter custom location: " location
+      location_code="O"
+      ;;
+    *)
+      echo "Invalid choice, setting location as 'Other'."
+      location="Other"
+      location_code="O"
+      ;;
+  esac
+
+  # Generate the ID based on location and sequential number
+  location_code="${location_codes[$location]:-${location_code}}"
+  id="${location_code}$(printf "%04d" ${location_counters[$location]})"
+  
+  # Increment the location counter for the next item
+  location_counters[$location]=$((location_counters[$location] + 1))
+
   read -p "Quantity: " qty
   read -p "Expiry Date (YYYY-MM-DD): " expiry
-  id=$(date +%s)
+
+  # Save the item to the inventory
   echo "$id,$name,$category,$location,$qty,$expiry" >> $DATA
-  echo "Item added!"
+  echo "Item added with ID: $id"
 }
+
 
 edit_item() {
   read -p "Enter Item ID to Edit: " id
