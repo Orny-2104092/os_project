@@ -1,7 +1,7 @@
-#!/bin/bash
+
 DATA="data/inventory.csv"
 
-# Define location codes and sequential counters for each location
+
 declare -A location_codes
 location_codes=(
   ["Shelf A"]="A"
@@ -26,7 +26,7 @@ add_item() {
   read -p "Item Name: " name
   read -p "Category: " category
   
-  # Predefined locations for efficiency
+ 
   echo "Select location:"
   echo "1. Shelf A"
   echo "2. Shelf B"
@@ -56,17 +56,16 @@ add_item() {
       ;;
   esac
 
-  # Generate the ID based on location and sequential number
+
   location_code="${location_codes[$location]:-${location_code}}"
   id="${location_code}$(printf "%04d" ${location_counters[$location]})"
   
-  # Increment the location counter for the next item
+
   location_counters[$location]=$((location_counters[$location] + 1))
 
   read -p "Quantity: " qty
   read -p "Expiry Date (YYYY-MM-DD): " expiry
 
-  # Save the item to the inventory
   echo "$id,$name,$category,$location,$qty,$expiry" >> $DATA
   echo "Item added with ID: $id"
 }
@@ -108,7 +107,7 @@ while true; do
   echo "2. Edit Item"
   echo "3. Delete Item"
   echo "4. View All Items"
-  echo "5. Search by Name"
+  echo "5. Search by Name/ID/Category/location"
   echo "0. Back"
   read -p "Choose: " opt
   case $opt in
